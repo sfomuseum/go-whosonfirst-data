@@ -107,7 +107,7 @@ $> ./bin/emit \
 }
 ```
 
-If you put URL in an HTML `<img />` you'd see this:
+If you put the value of the `url` property in to an HTML `<img />` you'd see this:
 
 ![](docs/images/oembed-sfo-svg.png)
 

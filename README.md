@@ -2,7 +2,7 @@
 
 ## Important
 
-Work in progress. This package might be renamed.
+Work in progress. This package might be renamed. Documentation to follow.
 
 ## Tools
 

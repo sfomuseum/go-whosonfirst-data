@@ -7,9 +7,10 @@ import (
 	"flag"
 	"fmt"
 	"github.com/aaronland/go-json-query"
+	"github.com/sfomuseum/go-whosonfirst-data/oembed"
 	"github.com/tidwall/pretty"
-	"github.com/whosonfirst/go-whosonfirst-iterator"
-	_ "github.com/whosonfirst/go-whosonfirst-iterator-fs"
+	"github.com/whosonfirst/go-whosonfirst-index"
+	_ "github.com/whosonfirst/go-whosonfirst-index/fs"
 	"io"
 	"io/ioutil"
 	"log"
@@ -21,7 +22,7 @@ import (
 
 func main() {
 
-	iter_uri := flag.String("uri", "directory:///", "A valid whosonfirst/go-whosonfirst-iterator URI.")
+	iter_uri := flag.String("uri", "directory:///", "A valid whosonfirst/go-whosonfirst-index URI.")
 
 	to_stdout := flag.Bool("stdout", true, "Emit to STDOUT")
 	to_devnull := flag.Bool("null", false, "Emit to /dev/null")
@@ -29,7 +30,16 @@ func main() {
 	as_json := flag.Bool("json", false, "Emit a JSON list.")
 	format_json := flag.Bool("format-json", false, "Format JSON output for each record.")
 
-	// as_oembed := flag.Bool("oembed", false, "Emit results as OEmbed records")
+	as_oembed := flag.Bool("oembed", false, "Emit results as OEmbed records")
+
+	author_name := flag.String("oembed-author-name", "SFO Museum", "...")
+	author_uri_template := flag.String("oembed-author-uri-template", "https://millsfield.sfomuseum.org/id/{wof_id}", "...")
+
+	provider_name := flag.String("oembed-provider-name", "SFO Museum", "...")
+	provider_url := flag.String("oembed-provider-url", "https://millsfield.sfomuseum.org/", "...")
+
+	media_uri_template := flag.String("oembed-media-uri-template", "https://millsfield.sfomuseum.org/media/%s/%d_{secret}_{label}.{extension}", "...")
+	media_label := flag.String("oembed-media-label", "z", "...")
 
 	var queries query.QueryFlags
 	flag.Var(&queries, "query", "One or more {PATH}={REGEXP} parameters for filtering records.")
@@ -42,12 +52,6 @@ func main() {
 	flag.Parse()
 
 	ctx := context.Background()
-
-	iter, err := iterator.NewIterator(ctx, *iter_uri)
-
-	if err != nil {
-		log.Fatalf("Failed to create new iterator, %v", err)
-	}
 
 	writers := make([]io.Writer, 0)
 
@@ -82,13 +86,9 @@ func main() {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	cb := func(ctx context.Context, result iterator.Result, iter_err error) error {
+	cb := func(ctx context.Context, fh io.Reader, args ...interface{}) error {
 
-		if iter_err != nil {
-			return iter_err
-		}
-
-		body, err := result.Bytes()
+		body, err := ioutil.ReadAll(fh)
 
 		if err != nil {
 			return err
@@ -110,18 +110,45 @@ func main() {
 			}
 		}
 
-		var stub interface{}
+		if *as_oembed {
 
-		err = json.Unmarshal(body, &stub)
+			opts := &oembed.OEmbedOptions{
+				AuthorName:        *author_name,
+				AuthorURITemplate: *author_uri_template,
+				ProviderName:      *provider_name,
+				ProviderURL:       *provider_url,
+				MediaURITemplate:  *media_uri_template,
+				MediaLabel:        *media_label,
+			}
 
-		if err != nil {
-			return err
-		}
+			oembed_record, err := oembed.OEmbedRecordFromFeature(ctx, body, opts)
 
-		body, err = json.Marshal(stub)
+			if err != nil {
+				return err
+			}
 
-		if err != nil {
-			return err
+			body, err = json.Marshal(oembed_record)
+
+			if err != nil {
+				return err
+			}
+
+		} else {
+
+			var stub interface{}
+
+			err = json.Unmarshal(body, &stub)
+
+			if err != nil {
+				return err
+			}
+
+			body, err = json.Marshal(stub)
+
+			if err != nil {
+				return err
+			}
+
 		}
 
 		if *format_json {
@@ -144,19 +171,22 @@ func main() {
 		return nil
 	}
 
+	idx, err := index.NewIndexer(*iter_uri, cb)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	uris := flag.Args()
 
 	if *as_json {
 		wr.Write([]byte("["))
 	}
 
-	for _, uri := range uris {
+	err = idx.Index(ctx, uris...)
 
-		err := iterator.IterateWithCallback(ctx, iter, uri, cb)
-
-		if err != nil {
-			log.Fatalf("Failed to iterate URI '%s', %v", uri, err)
-		}
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	if *as_json {

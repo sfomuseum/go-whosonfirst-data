@@ -5,18 +5,18 @@ import (
 	"context"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"github.com/aaronland/go-json-query"
+	"github.com/tidwall/pretty"
 	"github.com/whosonfirst/go-whosonfirst-iterator"
 	_ "github.com/whosonfirst/go-whosonfirst-iterator-fs"
-	"github.com/tidwall/pretty"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 	"sync"
 	"sync/atomic"
-	"strings"
-	"fmt"
 )
 
 func main() {
@@ -31,7 +31,6 @@ func main() {
 
 	// as_oembed := flag.Bool("oembed", false, "Emit results as OEmbed records")
 
-	
 	var queries query.QueryFlags
 	flag.Var(&queries, "query", "One or more {PATH}={REGEXP} parameters for filtering records.")
 
@@ -39,7 +38,7 @@ func main() {
 	desc_modes := fmt.Sprintf("Specify how query filtering should be evaluated. Valid modes are: %s", valid_modes)
 
 	query_mode := flag.String("query-mode", query.QUERYSET_MODE_ALL, desc_modes)
-	
+
 	flag.Parse()
 
 	ctx := context.Background()
@@ -67,19 +66,19 @@ func main() {
 	wr := io.MultiWriter(writers...)
 
 	var qs *query.QuerySet
-	
+
 	if len(queries) > 0 {
 
 		qs = &query.QuerySet{
 			Queries: queries,
 			Mode:    *query_mode,
-		}		
+		}
 	}
-	
+
 	mu := new(sync.RWMutex)
 
 	counter := int32(0)
-	
+
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
@@ -97,7 +96,7 @@ func main() {
 
 		// maybe just pass bytes.NewReader(body) to https://github.com/aaronland/go-jsonl/blob/master/walk/reader.go ?
 		// (20200721/thisisaaronland)
-		
+
 		if qs != nil {
 
 			matches, err := query.Matches(ctx, qs, body)
@@ -110,7 +109,7 @@ func main() {
 				return nil
 			}
 		}
-		
+
 		var stub interface{}
 
 		err = json.Unmarshal(body, &stub)
@@ -128,7 +127,7 @@ func main() {
 		if *format_json {
 			body = pretty.Pretty(body)
 		}
-		
+
 		body = bytes.TrimSpace(body)
 
 		mu.Lock()
@@ -136,10 +135,10 @@ func main() {
 
 		new_count := atomic.AddInt32(&counter, 1)
 
- 		if *as_json && new_count > 1 {
+		if *as_json && new_count > 1 {
 			wr.Write([]byte(","))
 		}
-		
+
 		wr.Write(body)
 		wr.Write([]byte("\n"))
 		return nil
@@ -147,11 +146,10 @@ func main() {
 
 	uris := flag.Args()
 
-
 	if *as_json {
 		wr.Write([]byte("["))
 	}
-	
+
 	for _, uri := range uris {
 
 		err := iterator.IterateWithCallback(ctx, iter, uri, cb)
@@ -160,9 +158,9 @@ func main() {
 			log.Fatalf("Failed to iterate URI '%s', %v", uri, err)
 		}
 	}
-	
+
 	if *as_json {
 		wr.Write([]byte("]"))
 	}
-	
+
 }

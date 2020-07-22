@@ -369,6 +369,27 @@ If you put the value of the `url` property in to an HTML `<img />` you'd see thi
 
 ![](docs/images/oembed-sfo-svg.png)
 
+## URI Templates
+
+_TBW_
+
+### author_url
+
+_TBW_
+
+| Variable | Description |
+| --- | --- |
+| `{wof_id}` | _TBW_ |
+
+### media_uri
+
+_TBW_
+
+| Variable | Description |
+| --- | --- |
+| `{wof_id}` | _TBW_ |
+| `{wof_tree}` | _TBW_ |
+
 ## See also
 
 * https://github.com/whosonfirst/go-whosonfirst-index

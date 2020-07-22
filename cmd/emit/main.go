@@ -26,7 +26,7 @@ import (
 
 func main() {
 
-	data_source_uri := flag.String("data-source", "directory:///", "A valid whosonfirst/go-whosonfirst-index URI.")
+	data_source_uri := flag.String("data-source", "directory://", "A valid whosonfirst/go-whosonfirst-index URI.")
 
 	to_stdout := flag.Bool("stdout", true, "Emit to STDOUT")
 	to_devnull := flag.Bool("null", false, "Emit to /dev/null")

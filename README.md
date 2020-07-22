@@ -202,8 +202,7 @@ For example:
 
 ```
 $> bin/emit /usr/local/data/sfomuseum-data-media/data/ \
-
-   -query 'properties.wof:belongs_to=\b102087579\b' \
+	-query 'properties.wof:belongs_to=\b102087579\b' \
 
    | wc -l
 

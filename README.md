@@ -20,8 +20,8 @@ go build -mod vendor -o bin/emit cmd/emit/main.go
 A command-line tool for parsing and emitting individual WOF records from a WOF data source.
 
 ```
-$> ./bin/emit -h
-Usage of ./bin/emit:
+$> bin/emit -h
+Usage of bin/emit:
   -data-source string
     	A valid whosonfirst/go-whosonfirst-index URI. (default "directory://")
   -format-json
@@ -161,7 +161,7 @@ $> bin/emit -data-source repo:// \
 By default all records are emitted as line-delimited JSON records. A side-effect of this is that the default WOF formatting is lost. In order to preserve the original formatting pass in the `-format-json` flag.
 
 ```
-$> ./bin/emit /usr/local/data/sfomuseum-data-media/data/
+$> bin/emit /usr/local/data/sfomuseum-data-media/data/
 
 {"bbox":[-122.387197,37.619087,-122.387197,37.619087],"geometry":{"coordinates":[-122.387197,37.619087],"type":"Point"},"id":1159341477,"properties":{"edtf:cessation":"uuuu","edtf:inception":"uuuu","geom:area":0,"geom:area_square_m":0,"geom:bbox":"-122.387197,37.619087,-122.387197,37.619087","geom:latitude":37.619087,"geom:longitude":-122.387197,"iso:country":"US","media:created":1443524024,"media:fingerprint":"857752f82858b46502479f803da8a52f1e168d5e","media:imagehash_avg":"a:f8ffbe8070f0c080","media:imagehash_diff":"d:40b0383aa3870f3d","media:medium":"image","media:mimetype":"image/jpeg","media:properties":{"colours":[{"closest":[{"hex":"#9c2542","name":"Big Dip O' Ruby","reference":"crayola"},{"hex":"#a52a2a","name":"brown","reference":"css4"}],"hex":"#8e362e","name":"#8e362e","reference":"vibrant"},{"closest":[{"hex":"#a5694f","name":"Sepia","reference":"crayola"},{"hex":"#a0522d","name":"sienna","reference":"css4"}],"hex":"#9c5b59","name":"#9c5b59","reference":"vibrant"},{"closest":[{"hex":"#cdc5c2","name":"Silver","reference":"crayola"},{"hex":"#c0c0c0","name":"silver","reference":"css4"}],"hex":"#c1c4c4","name":"#c1c4c4","reference":"vibrant"},{"closest":[{"hex":"#414a4c","name":"Outer Space","reference":"crayola"},{"hex":"#2f4f4f","name":"darkslategrey","reference":"css4"}],"hex":"#4b4a4a","name":"#4b4a4a","reference":"vibrant"}],"depicts":["1159160617"],"medium":"image","mimetype":"image/jpeg","sizes":{"b":{"extension":"jpg","height":682,"mimetype":"image/jpeg","secret":"PH2VfvpO7NRUAyns7QxdvOO2YfwYhyib2QK5FleNQ34LmzliMWYN","width":1024},"c":{"extension":"jpg","height":533,"mimetype":"image/jpeg","secret":"PH2VfvpO7NRUAyns7QxdvOO2YfwYhyib2QK5FleNQ34LmzliMWYN","width":800},"d":{"extension":"jpg","height":320,"mimetype":"image/jpeg","secret":"PH2VfvpO7NRUAyns7QxdvOO2YfwYhyib2QK5FleNQ34LmzliMWYN","width":320},"dd":{"extension":"jpg","height":533,"mimetype":"image/jpeg","secret":"PH2VfvpO7NRUAyns7QxdvOO2YfwYhyib2QK5FleNQ34LmzliMWYN","width":800},"n":{"extension":"jpg","height":213,"mimetype":"image/jpeg","secret":"PH2VfvpO7NRUAyns7QxdvOO2YfwYhyib2QK5FleNQ34LmzliMWYN","width":320},"o":{"extension":"jpg","height":2400,"mimetype":"image/jpeg","secret":"ACqgPxrMRzHdzGRJfkBqGVMtP2L9gTrn7mgfhMJesqhjXWJpmRK7","width":3600},"sq":{"extension":"jpg","height":320,"mimetype":"image/jpeg","secret":"PH2VfvpO7NRUAyns7QxdvOO2YfwYhyib2QK5FleNQ34LmzliMWYN","width":320},"z":{"extension":"jpg","height":426,"mimetype":"image/jpeg","secret":"PH2VfvpO7NRUAyns7QxdvOO2YfwYhyib2QK5FleNQ34LmzliMWYN","width":640}},"source":"user","status_id":0},"media:source":"sfomuseum","media:status_id":1,"mz:hierarchy_label":1,"mz:is_approximate":1,"mz:is_current":-1,"sfomuseum:placetype":"image","src:geom":"unknown","wof:belongsto":[102527513,102087579,1159341477,85688637,1159396315,1159396157,1159396321,102191575,85633793,85922583],"wof:breaches":[],"wof:country":"US","wof:created":1528920235,"wof:depicts":[1159396315,102527513,1360516119,1159396321,1159396157,1159160617],"wof:geomhash":"86e9b7d5fe1f6f1a6479fa62588a1dea","wof:hierarchy":[{"building_id":1159396321,"campus_id":102527513,"concourse_id":1159396315,"continent_id":102191575,"country_id":85633793,"county_id":102087579,"locality_id":85922583,"media_id":1159341477,"neighbourhood_id":-1,"region_id":85688637,"wing_id":1159396157}],"wof:id":1159341477,"wof:lastmodified":1577131152,"wof:name":"Installation view of \"The Nation’s Game: A History of the National Football League\"","wof:parent_id":1159396315,"wof:placetype":"media","wof:repo":"sfomuseum-data-media","wof:superseded_by":[],"wof:supersedes":[],"wof:tags":[]},"type":"Feature"}
 ...and so on
@@ -170,7 +170,7 @@ $> ./bin/emit /usr/local/data/sfomuseum-data-media/data/
 Or:
 
 ```
-$> ./bin/emit --format-json /usr/local/data/sfomuseum-data-media/data/
+$> bin/emit --format-json /usr/local/data/sfomuseum-data-media/data/
 
 {
   "id": 1377012109,
@@ -214,7 +214,7 @@ You can pass multiple `-query` parameters. The default query mode is to ensure t
 For example, this is how you would query the `sfomuseum-data-flights-2020-07` Git repository filtering for records involving either Boeing 737-8 or Airbus A321 aircraft. The results are emitted as a JSON list and piped to the `jq` tool which prints their `sfomuseum:flight_id` property:
 
 ```
-> ./bin/emit \
+> bin/emit \
 	-json \
 	-query 'properties.icao:aircraft=B738' \
 	-query 'properties.icao:aircraft=A321' \
@@ -260,7 +260,7 @@ It is also possible to emit OpenAccess records as [OEmbed](https://oembed.com/) 
 For example:
 
 ```
-$> ./bin/emit \
+$> bin/emit \
 	-format-json \
 	-oembed \
 	/usr/local/data/sfomuseum-data-media/data/
@@ -344,7 +344,7 @@ _Important: Everything involving media in WOF documents remains a work in progre
 If no relevant media information can be found in a WOF feature then the code will render the feature's geometry as an SVG image and assign a base-64 encoded data URL of the representation to the OEmbed record's `url` property. For example:
 
 ```
-$> ./bin/emit \
+$> bin/emit \
 	-format-json \
 	-oembed \
 	-query 'properties.wof:concordances.iata:code=SFO' \
@@ -365,7 +365,7 @@ $> ./bin/emit \
 }
 ```
 
-If you put the value of the `url` property in to an HTML `<img />` you'd see this:
+If you put the value of the `url` property in to an HTML `<img />` tag you'd see this:
 
 ![](docs/images/oembed-sfo-svg.png)
 

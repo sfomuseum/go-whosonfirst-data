@@ -10,7 +10,7 @@ import (
 	"github.com/jtacoma/uritemplates"
 	"github.com/tidwall/gjson"
 	"github.com/whosonfirst/go-geojson-svg"
-	"github.com/whosonfirst/go-whosonfirst-sources"
+	_ "github.com/whosonfirst/go-whosonfirst-sources"
 	"github.com/whosonfirst/go-whosonfirst-uri"
 	_ "log"
 )
@@ -180,13 +180,15 @@ func OEmbedRecordFromFeature(ctx context.Context, body []byte, opts *OEmbedOptio
 
 	if src_rsp.Exists() {
 
-		src_name := src_rsp.String()
-		src, err := sources.GetSourceByName(src_name)
+		/*
+			src_name := src_rsp.String()
+			src, err := sources.GetSourceByName(src_name)
 
-		if err != nil {
-			provider_name = src.Fullname
-			provider_url = src.URL
-		}
+			if err != nil {
+				provider_name = src.Fullname
+				provider_url = src.URL
+			}
+		*/
 	}
 
 	o := &oembed.Photo{

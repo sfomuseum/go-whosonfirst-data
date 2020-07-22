@@ -1,6 +1,11 @@
 package main
 
 import (
+	_ "github.com/whosonfirst/go-whosonfirst-index-git"
+	_ "github.com/whosonfirst/go-whosonfirst-index/fs"
+)
+
+import (
 	"bytes"
 	"context"
 	"encoding/json"
@@ -10,7 +15,6 @@ import (
 	"github.com/sfomuseum/go-whosonfirst-data/oembed"
 	"github.com/tidwall/pretty"
 	"github.com/whosonfirst/go-whosonfirst-index"
-	_ "github.com/whosonfirst/go-whosonfirst-index/fs"
 	"io"
 	"io/ioutil"
 	"log"
@@ -22,7 +26,7 @@ import (
 
 func main() {
 
-	iter_uri := flag.String("uri", "directory:///", "A valid whosonfirst/go-whosonfirst-index URI.")
+	data_source_uri := flag.String("data-source", "directory:///", "A valid whosonfirst/go-whosonfirst-index URI.")
 
 	to_stdout := flag.Bool("stdout", true, "Emit to STDOUT")
 	to_devnull := flag.Bool("null", false, "Emit to /dev/null")
@@ -133,6 +137,10 @@ func main() {
 				return err
 			}
 
+			if *format_json {
+				body = pretty.Pretty(body)
+			}
+
 		} else {
 
 			var stub interface{}
@@ -143,16 +151,14 @@ func main() {
 				return err
 			}
 
-			body, err = json.Marshal(stub)
+			if !*format_json {
 
-			if err != nil {
-				return err
+				body, err = json.Marshal(stub)
+
+				if err != nil {
+					return err
+				}
 			}
-
-		}
-
-		if *format_json {
-			body = pretty.Pretty(body)
 		}
 
 		body = bytes.TrimSpace(body)
@@ -171,7 +177,7 @@ func main() {
 		return nil
 	}
 
-	idx, err := index.NewIndexer(*iter_uri, cb)
+	idx, err := index.NewIndexer(*data_source_uri, cb)
 
 	if err != nil {
 		log.Fatal(err)

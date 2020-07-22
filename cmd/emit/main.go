@@ -36,14 +36,14 @@ func main() {
 
 	as_oembed := flag.Bool("oembed", false, "Emit results as OEmbed records")
 
-	author_name := flag.String("oembed-author-name", "SFO Museum", "...")
-	author_uri_template := flag.String("oembed-author-uri-template", "https://millsfield.sfomuseum.org/id/{wof_id}", "...")
+	author_name := flag.String("oembed-author-name", "SFO Museum", "A default value for the OEmbed 'author_name' property.")
+	author_uri_template := flag.String("oembed-author-uri-template", "https://millsfield.sfomuseum.org/id/{wof_id}", "A valid RFC 6570 URI template to use for the OEmbed 'author_url' property.")
 
-	provider_name := flag.String("oembed-provider-name", "SFO Museum", "...")
-	provider_url := flag.String("oembed-provider-url", "https://millsfield.sfomuseum.org/", "...")
+	provider_name := flag.String("oembed-provider-name", "SFO Museum", "A default value for the OEmbed 'provider_name' property.")
+	provider_url := flag.String("oembed-provider-url", "https://millsfield.sfomuseum.org/", "A default value for the OEmbed 'provider_url' property.")
 
-	media_uri_template := flag.String("oembed-media-uri-template", "https://millsfield.sfomuseum.org/media/%s/%d_{secret}_{label}.{extension}", "...")
-	media_label := flag.String("oembed-media-label", "z", "...")
+	media_uri_template := flag.String("oembed-media-uri-template", "https://millsfield.sfomuseum.org/media/%s/%d_{secret}_{label}.{extension}", "A valid Go language `fmt` template for constucting a RFC 6570 URI template to use for the OEmbed 'url' property.")
+	media_label := flag.String("oembed-media-label", "z", "A valid (WOF) media:properties.sizes property label to identify image data.")
 
 	var queries query.QueryFlags
 	flag.Var(&queries, "query", "One or more {PATH}={REGEXP} parameters for filtering records.")

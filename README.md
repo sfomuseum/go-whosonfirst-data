@@ -20,16 +20,30 @@ go build -mod vendor -o bin/emit cmd/emit/main.go
 A command-line tool for parsing and emitting individual WOF records from a WOF data source.
 
 ```
-> ./bin/emit -h
+$> ./bin/emit -h
 Usage of ./bin/emit:
   -data-source string
-    	A valid whosonfirst/go-whosonfirst-index data source URI. (default "directory://")
+    	A valid whosonfirst/go-whosonfirst-index URI. (default "directory:///")
   -format-json
     	Format JSON output for each record.
   -json
     	Emit a JSON list.
   -null
     	Emit to /dev/null
+  -oembed
+    	Emit results as OEmbed records
+  -oembed-author-name string
+    	A default value for the OEmbed 'author_name' property. (default "SFO Museum")
+  -oembed-author-uri-template string
+    	A valid RFC 6570 URI template to use for the OEmbed 'author_url' property. (default "https://millsfield.sfomuseum.org/id/{wof_id}")
+  -oembed-media-label string
+    	A valid (WOF) media:properties.sizes property label to identify image data. (default "z")
+  -oembed-media-uri-template fmt
+    	A valid Go language fmt template for constucting a RFC 6570 URI template to use for the OEmbed 'url' property. (default "https://millsfield.sfomuseum.org/media/%s/%d_{secret}_{label}.{extension}")
+  -oembed-provider-name string
+    	A default value for the OEmbed 'provider_name' property. (default "SFO Museum")
+  -oembed-provider-url string
+    	A default value for the OEmbed 'provider_url' property. (default "https://millsfield.sfomuseum.org/")
   -query value
     	One or more {PATH}={REGEXP} parameters for filtering records.
   -query-mode string
@@ -252,7 +266,54 @@ $> ./bin/emit \
 ... and so on
 ```
 
-...if not media information can be found then the code will create a base-64 encoded data URL for the feature's geometry.
+Image data for OEmbed records is expected to be found in one or more properties in the `properties.media:properties` dictionary of the WOF record. Specifically:
+
+* `properties.media:properties.sizes.{STRING_LABEL}` - A dictionary containing dimensions and other details for constructing a URL for an image identified by a string label.
+* `properties.media:properties.uri_template` - A valid RFC6570 URI template for constructing an image URL using the details derived from `properties.media:properties.sizes.{STRING_LABEL}`.
+
+Here is [an abbreviated example](https://raw.githubusercontent.com/sfomuseum-data/sfomuseum-data-media/master/data/115/933/962/7/1159339627.geojson) of a WOF record with `media:` properties.
+
+```
+{
+  "id": 1159339627,
+  "type": "Feature",
+  "properties": {
+    ...  		
+    "media:created": 1508957796,
+    "media:fingerprint": "fd6e55e1ea940673e8dd7edfdacf0c2d546b8d6a",
+    "media:imagehash_avg": "a:c2e7e7effbff0000",
+    "media:imagehash_diff": "d:868e8e9e92c2eaba",
+    "media:medium": "image",
+    "media:mimetype": "image/jpeg",
+    "media:properties": {
+      "medium": "image",
+      "mimetype": "image/jpeg",
+      "sizes": {
+        ...      	       
+        "z": {
+          "extension": "jpg",
+          "height": 480,
+          "mimetype": "image/jpeg",
+          "secret": "UaqY5CItyrimU82DjYTYxy6XfRZXO0tD1YfBHWYhLnxGK1id8sdf",
+          "width": 320
+        },
+	"uri_template": "https://millsfield.sfomuseum.org/media/115/933/962/7/1159339627_{secret}_{label}.{extension}"
+      }    			
+    }
+}
+```
+
+If a WOF record does contain a `media:properties.uri_template` property then the value of the `-oembed-media-uri-template` flag will be used to construct a URI template. For example:
+
+```
+	wof_id := 1159339627
+	wof_tree := "115/933/962/7"
+	media_template_uri = fmt.Sprintf(opts.MediaURITemplate, wof_tree, wof_id)
+```
+
+_Important: Everything involving media in WOF documents remains a work in progress and is still subject to change._
+
+If no relevant media information can be found in a WOF feature then the code will render the feature's geometry as an SVG image and assign a base-64 encoded data URL of the representation to the OEmbed record's `url` property. For example:
 
 ```
 $> ./bin/emit \

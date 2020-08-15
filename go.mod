@@ -4,7 +4,7 @@ go 1.12
 
 require (
 	github.com/aaronland/go-json-query v0.0.2
-	github.com/aaronland/go-wunderkammer v0.0.6
+	github.com/aaronland/go-wunderkammer v0.0.7
 	github.com/jtacoma/uritemplates v1.0.0
 	github.com/tidwall/gjson v1.6.0
 	github.com/tidwall/pretty v1.0.1

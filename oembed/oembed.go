@@ -24,12 +24,13 @@ type Media struct {
 }
 
 type OEmbedOptions struct {
-	AuthorName        string
-	AuthorURITemplate string
-	ProviderName      string
-	ProviderURL       string
-	MediaURITemplate  string
-	MediaLabel        string
+	AuthorName          string
+	AuthorURITemplate   string
+	ProviderName        string
+	ProviderURL         string
+	MediaURITemplate    string
+	MediaLabel          string
+	ThumbnailMediaLabel string
 }
 
 const WHOSONFIRST_URI_TEMPLATE string = "wof://id/{wofid}"
@@ -203,6 +204,44 @@ func OEmbedRecordFromFeature(ctx context.Context, body []byte, opts *OEmbedOptio
 		ProviderName: provider_name,
 		ProviderURL:  provider_url,
 		ObjectURI:    object_uri,
+	}
+
+	if opts.ThumbnailMediaLabel != "" {
+
+		media_path := fmt.Sprintf("properties.media:properties.sizes.%s", opts.ThumbnailMediaLabel)
+		media_rsp := gjson.GetBytes(body, media_path)
+
+		if media_rsp.Exists() {
+
+			media_body := media_rsp.String()
+
+			var m *Media
+
+			err = json.Unmarshal([]byte(media_body), &m)
+
+			if err != nil {
+				return nil, err
+			}
+
+			media_values := make(map[string]interface{})
+			media_values["secret"] = m.Secret
+			media_values["extension"] = m.Extension
+			media_values["label"] = media_label
+
+			url, err := media_template.Expand(media_values)
+
+			if err != nil {
+				return nil, err
+			}
+
+			o.ThumbnailURL = url
+
+			o.ThumbnailHeight = m.Height
+			o.ThumbnailWidth = m.Width
+		} else {
+			// do something here...
+		}
+
 	}
 
 	return o, nil

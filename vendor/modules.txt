@@ -1,6 +1,6 @@
 # github.com/aaronland/go-json-query v0.0.2
 github.com/aaronland/go-json-query
-# github.com/aaronland/go-wunderkammer v0.0.6
+# github.com/aaronland/go-wunderkammer v0.0.7
 github.com/aaronland/go-wunderkammer/oembed
 # github.com/emirpasic/gods v1.12.0
 github.com/emirpasic/gods/containers

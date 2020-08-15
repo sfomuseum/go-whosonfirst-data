@@ -45,6 +45,8 @@ func main() {
 	media_uri_template := flag.String("oembed-media-uri-template", "https://millsfield.sfomuseum.org/media/%s/%d_{secret}_{label}.{extension}", "A valid Go language `fmt` template for constucting a RFC 6570 URI template to use for the OEmbed 'url' property.")
 	media_label := flag.String("oembed-media-label", "z", "A valid (WOF) media:properties.sizes property label to identify image data.")
 
+	thumbnail_media_label := flag.String("oembed-thumbnail-media-label", "n", "A valid (WOF) media:properties.sizes property label to identify image data for thumbnails.")
+
 	var queries query.QueryFlags
 	flag.Var(&queries, "query", "One or more {PATH}={REGEXP} parameters for filtering records.")
 
@@ -117,12 +119,13 @@ func main() {
 		if *as_oembed {
 
 			opts := &oembed.OEmbedOptions{
-				AuthorName:        *author_name,
-				AuthorURITemplate: *author_uri_template,
-				ProviderName:      *provider_name,
-				ProviderURL:       *provider_url,
-				MediaURITemplate:  *media_uri_template,
-				MediaLabel:        *media_label,
+				AuthorName:          *author_name,
+				AuthorURITemplate:   *author_uri_template,
+				ProviderName:        *provider_name,
+				ProviderURL:         *provider_url,
+				MediaURITemplate:    *media_uri_template,
+				MediaLabel:          *media_label,
+				ThumbnailMediaLabel: *thumbnail_media_label,
 			}
 
 			oembed_record, err := oembed.OEmbedRecordFromFeature(ctx, body, opts)

@@ -20,8 +20,8 @@ go build -mod vendor -o bin/emit cmd/emit/main.go
 A command-line tool for parsing and emitting individual WOF records from a WOF data source.
 
 ```
-$> bin/emit -h
-Usage of bin/emit:
+$> ./bin/emit -h
+Usage of ./bin/emit:
   -data-source string
     	A valid whosonfirst/go-whosonfirst-index URI. (default "directory://")
   -format-json
@@ -44,6 +44,8 @@ Usage of bin/emit:
     	A default value for the OEmbed 'provider_name' property. (default "SFO Museum")
   -oembed-provider-url string
     	A default value for the OEmbed 'provider_url' property. (default "https://millsfield.sfomuseum.org/")
+  -oembed-thumbnail-media-label string
+    	A valid (WOF) media:properties.sizes property label to identify image data for thumbnails. (default "n")
   -query value
     	One or more {PATH}={REGEXP} parameters for filtering records.
   -query-mode string

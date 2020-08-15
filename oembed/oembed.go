@@ -226,7 +226,7 @@ func OEmbedRecordFromFeature(ctx context.Context, body []byte, opts *OEmbedOptio
 			media_values := make(map[string]interface{})
 			media_values["secret"] = m.Secret
 			media_values["extension"] = m.Extension
-			media_values["label"] = media_label
+			media_values["label"] = opts.ThumbnailMediaLabel
 
 			url, err := media_template.Expand(media_values)
 
@@ -238,8 +238,9 @@ func OEmbedRecordFromFeature(ctx context.Context, body []byte, opts *OEmbedOptio
 
 			o.ThumbnailHeight = m.Height
 			o.ThumbnailWidth = m.Width
+
 		} else {
-			// do something here...
+			// log.Println("WHERE IS", media_path)
 		}
 
 	}
